@@ -67,7 +67,7 @@ def definite_integral():
         for i in range(n):
             deltax = (b - a) / n
             integrated += deltax * \
-                          math_func(a + (deltax * i + deltax * (i + 1)) / 2)
+                math_func(a + (deltax * i + deltax * (i + 1)) / 2)
         return integrated
 
     def simpsons_rule():
@@ -129,6 +129,17 @@ def powerset():
 
 
 def generate_truth_table():
+
+    def transform_expression(expr):
+        expr_copy = expr
+        if "implies" in expr:
+            expr_arr = expr.split('implies')
+            expr_copy = f"(not {expr_arr[0]} or {expr_arr[1]})"
+        if "=>" in expr:
+            expr_arr = expr.split('=>')
+            expr_copy = f"(not {expr_arr[0]} or {expr_arr[1]})"
+        return expr_copy
+
     variables = {i.strip(): [] for i in
                  input("Enter your variables separated by a comma: ").split(",")}
     i = 2
@@ -143,21 +154,24 @@ def generate_truth_table():
         i *= 2
 
     # add expressions to truth table
-    user_expressions = [s.strip() for s in input("Enter truth table expressions separated by a comma: ").split(",")]
+    user_expressions = [s.strip() for s in input(
+        "Enter truth table expressions separated by a comma: ").split(",")]
     expressions = {}
     for expression in user_expressions:
         expressions[expression] = []
         for i in range(num_rows):
             for key in variables:
                 globals()[key] = variables[key][i]
-            expressions[expression].append(int(eval(expression)))
+            expressions[expression].append(
+                int(eval(transform_expression(expression))))
 
     # add results of truth table
     for key in expressions:
         variables[key] = expressions[key]
 
     # print tabular data for user to see
-    print(tabulate(variables, headers="keys", tablefmt='pretty', numalign="center"))
+    print(tabulate(variables, headers="keys",
+          tablefmt='pretty', numalign="center"))
 
 
 def start():
@@ -166,7 +180,8 @@ def start():
 
     def list_all_options():
         for key in user_options:
-            print('{}: {}'.format(", ".join(key.split(',')), user_options[key][1]))
+            print('{}: {}'.format(
+                ", ".join(key.split(',')), user_options[key][1]))
 
     def exit_program():
         nonlocal exit_status
@@ -195,7 +210,8 @@ def start():
         if user_step.lower().strip() in all_options:
             all_options[user_step.lower().strip()]()
         else:
-            print('Option unrecognized or not supported, to see a list of all possible options, enter "list"')
+            print(
+                'Option unrecognized or not supported, to see a list of all possible options, enter "list"')
 
         if not exit_status:
             user_step = input("What would you like to do?: ")
